@@ -1,0 +1,94 @@
+{
+    "description": "Creates a Debian 8 (Jessie) machine image.",
+    "variables": {
+        "vm_name": "debian-802-jessie",
+        "iso_url": "{{env `PACKER_ISO_URL`}}",
+        "iso_sha512": "923cd1bfbfa62d78aecaa92d919ee54a95c8fca834b427502847228cf06155e7243875f59279b0bf6bfd1b579cbe2f1bc80528a265dafddee9a9d2a197ef3806",
+        "cores": "2",
+        "memory": "1024",
+        "disk_size": "5120",
+        "ssh_user": "{{env `PACKER_SSH_USER`}}",
+        "ssh_pass": "{{env `PACKER_SSH_PASS`}}",
+        "ssh_port": "22",
+        "ssh_wait_timeout": "10000s",
+        "locale": "en_US",
+        "timezone": "WET",
+        "kbd_lang": "pt",
+        "kbd_model": "pc105",
+        "hostname": "jessie",
+        "domain": ""
+    },
+
+
+
+    "builders": [
+        {
+            "type": "qemu",
+            "name": "jessie-qemu",
+            "accelerator": "kvm",
+            "disk_interface": "virtio",
+            "net_device": "virtio-net",
+            "format": "qcow2",
+            "headless": "false",
+            "qemu_binary": "qemu-system-x86_64",
+
+            "boot_command": [
+                "<esc><wait>",
+                "install <wait>",
+                "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg <wait>",
+                "debian-installer={{user `locale`}} <wait>",
+                "auto <wait>",
+                "locale={{user `locale`}} <wait>",
+                "time/zone={{user `timezone`}} <wait>",
+                "kbd-chooser/method=us <wait>",
+                "netcfg/get_hostname={{user `hostname`}} <wait>",
+                "netcfg/get_domain={{user `domain`}} <wait>",
+                "fb=false <wait>",
+                "debconf/frontend=noninteractive <wait>",
+                "console-setup/ask_detect=false <wait>",
+                "console-keymaps-at/keymap={{user `kbd_lang`}} <wait>",
+                "keyboard-configuration/xkb-keymap={{user `kbd_lang`}} <wait>",
+                "keyboard-configuration/modelcode={{user `kbd_model`}} <wait>",
+                "passwd/root-login=false <wait>",
+                "passwd/user-fullname={{user `ssh_user`}} <wait>",
+                "passwd/username={{user `ssh_user`}} <wait>",
+                "passwd/user-password=\"{{user `ssh_pass`}}\" <wait>",
+                "passwd/user-password-again=\"{{user `ssh_pass`}}\" <wait>",
+                "<enter><wait>"
+            ],
+            "disk_size": "{{user `disk_size`}}",
+            "http_directory": "http",
+            "iso_checksum": "{{user `iso_sha512`}}",
+            "iso_checksum_type": "sha512",
+            "iso_url": "{{user `iso_url`}}",
+            "communicator": "ssh",
+            "ssh_username": "{{user `ssh_user`}}",
+            "ssh_password": "{{user `ssh_pass`}}",
+            "ssh_port": "{{user `ssh_port`}}",
+            "ssh_wait_timeout": "{{user `ssh_wait_timeout`}}",
+            "shutdown_command": "echo '{{user `ssh_pass`}}' | sudo -S shutdown -P now"
+        }
+
+    ],
+
+
+
+
+    "provisioners": [
+        {
+            "type": "shell",
+            "execute_command": "echo '{{user `ssh_pass`}}' | sudo -S sh '{{.Path}}'",
+            "scripts": [
+                "scripts/base.sh",
+                "scripts/cleanup.sh"
+            ]
+        }
+    ],
+
+
+
+
+    "post-processors": [
+    ]
+}
+
