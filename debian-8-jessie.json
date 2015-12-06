@@ -181,13 +181,13 @@
 
         {
             "type": "amazon-ebs",
-            "name": "ubuntu-trusty-14.04",
+            "name": "jessie-awsebs",
             "region": "eu-west-1",
-            "source_ami": "ami-47a23a30",
+            "source_ami": "ami-e31a6594",
             "instance_type": "t2.micro",
-            "ssh_username": "ubuntu",
+            "ssh_username": "admin",
             "ami_name": "packer-quick-start {{timestamp}}",
-            "ami_description": "packer ubuntu trusty 14.04"
+            "ami_description": "packer debian 8 jessie"
         }
     ],
 
@@ -207,8 +207,8 @@
                 "scripts/cleanup.sh"
             ],
             "type": "shell",
-            "only": ["ubuntu-trusty-14.04"],
-            "execute_command": "echo '{{user `ssh_pass`}}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+            "only": ["jessie-awsebs"],
+            "execute_command": "{{.Vars}} sudo -E -S bash '{{.Path}}'",
             "scripts": [
                 "scripts/cloud.sh"
             ]
