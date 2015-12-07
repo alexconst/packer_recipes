@@ -219,6 +219,12 @@
 
 
     "post-processors": [
+        {
+            "type": "vagrant",
+            "only": ["jessie-vboxiso"],
+            "keep_input_artifact": true,
+            "compression_level": 9
+        }
     ]
 }
 
