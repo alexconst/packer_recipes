@@ -4,7 +4,10 @@
 # https://github.com/vmware/open-vm-tools#will-the-commercial-version-vmware-tools-differ-from-the-open-source-version-open-vm-tools-if-so-how
 #   Will the commercial version (VMware Tools) differ from the open source version (open-vm-tools)? If so, how?
 #   However, we do currently make use of certain components licensed from third parties as well as components from other VMware products which are only available in binary form.
-# And advantage on using the open-vm-tools is that they are updated, while an older VMware version of the tools will not.
+# An advantage on using the open-vm-tools is that they are updated, while an older VMware version of the tools will not.
+# NOTE: for some (bug?) reason higher resolution in console mode does not work. The workaround is to SSH to the machine.
+# NOTE: installing open-vm-tools-desktop is required if you want the guest VM to support a higher resolution or screen autofit. Do it manually or adapt this script.
+
 use_open_vm_tools=1
 
 
@@ -27,8 +30,8 @@ case "$PACKER_BUILDER_TYPE" in
             iso_url="/var/tmp/linux.iso"
             mkdir -p /mnt/cdrom
             mount -o loop "$iso_url" /mnt/cdrom
-            mkdir -p /tmp/vmtools/ 
-            tar -zxvf /mnt/cdrom/VMwareTools-*.tar.gz -C /tmp/vmtools 
+            mkdir -p /tmp/vmtools/
+            tar -zxvf /mnt/cdrom/VMwareTools-*.tar.gz -C /tmp/vmtools
             /tmp/vmtools/vmware-tools-distrib/vmware-install.pl --default
             umount /mnt/cdrom
             rm "$iso_url"
@@ -40,7 +43,7 @@ case "$PACKER_BUILDER_TYPE" in
             clean_headers
         else
             echo "ERROR: something went wrong. Incorrect choice of vm tools."
-            exit 3 
+            exit 3
         fi
         ;;
 
