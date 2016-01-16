@@ -1,7 +1,8 @@
 {
-    "description": "Creates a Debian 8 (Jessie) machine image.",
+    "description": "Creates a Debian 8 (Jessie) amd64 machine image.",
     "variables": {
-        "vm_name": "debian-802-jessie",
+        "outputs_dir": "builds.ignore",
+        "vm_name": "debian-802-jessie-amd64",
         "iso_url": "{{env `PACKER_DEBIAN_ISO_URL`}}",
         "iso_sha512": "{{env `PACKER_DEBIAN_ISO_SUM`}}",
         "cores": "2",
@@ -31,7 +32,7 @@
             "headless": "false",
             "accelerator": "kvm",
             "disk_interface": "virtio",
-            "net_device": "virtio-net",
+            "net_device": "e1000",
             "format": "qcow2",
             "qemu_binary": "qemu-system-x86_64",
 
@@ -69,7 +70,8 @@
             "ssh_password": "{{user `ssh_pass`}}",
             "ssh_port": "{{user `ssh_port`}}",
             "ssh_wait_timeout": "{{user `ssh_wait_timeout`}}",
-            "shutdown_command": "echo '{{user `ssh_pass`}}' | sudo -S shutdown -P now"
+            "shutdown_command": "echo '{{user `ssh_pass`}}' | sudo -S shutdown -P now",
+            "output_directory": "{{user `outputs_dir`}}/{{user `vm_name`}}_{{build_name}}/"
         },
 
         {
@@ -124,7 +126,8 @@
             "ssh_password": "{{user `ssh_pass`}}",
             "ssh_port": "{{user `ssh_port`}}",
             "ssh_wait_timeout": "{{user `ssh_wait_timeout`}}",
-            "shutdown_command": "echo '{{user `ssh_pass`}}' | sudo -S shutdown -P now"
+            "shutdown_command": "echo '{{user `ssh_pass`}}' | sudo -S shutdown -P now",
+            "output_directory": "{{user `outputs_dir`}}/{{user `vm_name`}}_{{build_name}}/"
         },
 
         {
@@ -176,7 +179,8 @@
             "ssh_password": "{{user `ssh_pass`}}",
             "ssh_port": "{{user `ssh_port`}}",
             "ssh_wait_timeout": "{{user `ssh_wait_timeout`}}",
-            "shutdown_command": "echo '{{user `ssh_pass`}}' | sudo -S shutdown -P now"
+            "shutdown_command": "echo '{{user `ssh_pass`}}' | sudo -S shutdown -P now",
+            "output_directory": "{{user `outputs_dir`}}/{{user `vm_name`}}_{{build_name}}/"
         },
 
         {
@@ -221,9 +225,10 @@
     "post-processors": [
         {
             "type": "vagrant",
-            "only": ["jessie-vboxiso"],
+            "only": ["jessie-qemu", "jessie-vboxiso", "jessie-vmwareiso"],
             "keep_input_artifact": true,
-            "compression_level": 9
+            "compression_level": 0,
+            "output": "{{user `outputs_dir`}}/{{user `vm_name`}}_{{.BuildName}}.box"
         }
     ]
 }
