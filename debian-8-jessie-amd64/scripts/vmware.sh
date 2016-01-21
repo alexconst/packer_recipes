@@ -48,7 +48,7 @@ case "$PACKER_BUILDER_TYPE" in
         ;;
 
     *)
-        echo "Nothing to do here. This isn't a vmware builder type."
+        echo "Nothing to do here. Not a VMware builder."
         ;;
 
 esac

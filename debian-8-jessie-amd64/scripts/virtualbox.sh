@@ -19,6 +19,9 @@ if [ $PACKER_BUILDER_TYPE == 'virtualbox-iso' ]; then
 
     apt-get -y remove linux-headers-$(uname -r) build-essential perl
     apt-get -y autoremove
+
+else
+    echo "Nothing to do here. Not a VirtualBox builder."
 fi
 
 

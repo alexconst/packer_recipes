@@ -1,7 +1,7 @@
 {
     "description": "Creates a Debian 8 (Jessie) amd64 machine image.",
     "variables": {
-        "outputs_dir": "builds.ignore",
+        "outputs_dir": "bugs.ignore",
         "vm_name": "debian-802-jessie-amd64",
         "iso_url": "{{env `PACKER_DEBIAN_ISO_URL`}}",
         "iso_sha512": "{{env `PACKER_DEBIAN_ISO_SUM`}}",
@@ -206,10 +206,14 @@
             "execute_command": "echo '{{user `ssh_pass`}}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
             "scripts": [
                 "scripts/base.sh",
+                "scripts/vagrant.sh",
                 "scripts/virtualbox.sh",
                 "scripts/vmware.sh",
                 "scripts/cleanup.sh"
-            ],
+            ]
+        },
+
+        {
             "type": "shell",
             "only": ["jessie-awsebs"],
             "execute_command": "{{.Vars}} sudo -E -S bash '{{.Path}}'",
@@ -227,7 +231,7 @@
             "type": "vagrant",
             "only": ["jessie-qemu", "jessie-vboxiso", "jessie-vmwareiso"],
             "keep_input_artifact": true,
-            "compression_level": 0,
+            "compression_level": 9,
             "output": "{{user `outputs_dir`}}/{{user `vm_name`}}_{{.BuildName}}.box"
         }
     ]
