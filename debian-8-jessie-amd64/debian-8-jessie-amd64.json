@@ -1,7 +1,7 @@
 {
     "description": "Creates a Debian 8 (Jessie) amd64 machine image.",
     "variables": {
-        "outputs_dir": "bugs.ignore",
+        "outputs_dir": "builds.ignore",
         "vm_name": "debian-802-jessie-amd64",
         "iso_url": "{{env `PACKER_DEBIAN_ISO_URL`}}",
         "iso_sha512": "{{env `PACKER_DEBIAN_ISO_SUM`}}",
@@ -207,6 +207,7 @@
             "scripts": [
                 "scripts/base.sh",
                 "scripts/vagrant.sh",
+                "scripts/motd.sh",
                 "scripts/virtualbox.sh",
                 "scripts/vmware.sh",
                 "scripts/cleanup.sh"
@@ -231,7 +232,7 @@
             "type": "vagrant",
             "only": ["jessie-qemu", "jessie-vboxiso", "jessie-vmwareiso"],
             "keep_input_artifact": true,
-            "compression_level": 9,
+            "compression_level": 0,
             "output": "{{user `outputs_dir`}}/{{user `vm_name`}}_{{.BuildName}}.box"
         }
     ]
