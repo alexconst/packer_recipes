@@ -2,7 +2,7 @@
 
 # Set up dynamic MOTD as in ubuntu and described at
 # https://oitibs.com/debian-jessie-dynamic-motd/
-# TODO: check the updates component at
+# TODO: check the module for existing software updates at
 # https://nickcharlton.net/posts/debian-ubuntu-dynamic-motd.html
 
 # scripts modified to also:

@@ -21,6 +21,14 @@ chmod 0440 /tmp/vagrant
 mv /tmp/vagrant /etc/sudoers.d/
 
 
+echo "Fix 'stdin: is not a tty' non-fatal error message..."
+sed -i '/tty/!s/mesg n/tty -s \&\& mesg n/' /root/.profile
+
+echo "Fix 'dpkg-preconfigure: unable to re-open stdin: No such file or directory' non-fatal error message in apt..."
+echo -e '\nexport DEBIAN_FRONTEND=noninteractive' >> /root/.profile
+echo -e '\nexport DEBIAN_FRONTEND=noninteractive' >> /home/vagrant/.profile
+
+
 # NOTE: this isn't really needed since when there is no SSH keypair, Vagrant
 # will generate one. Unless you would want to disable password login from the
 # start.
