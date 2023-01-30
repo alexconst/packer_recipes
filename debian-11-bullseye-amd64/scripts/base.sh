@@ -1,5 +1,7 @@
 #!/bin/bash -eux
 
+# Fix errors "debconf: unable to initialize frontend: Dialog", "debconf: unable to initialize frontend: Readline"
+echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 # Update the box
 apt-get -y update

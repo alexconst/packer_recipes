@@ -34,6 +34,7 @@
             "disk_interface": "virtio-scsi",
             "net_device": "virtio-net",
             "format": "qcow2",
+            "memory": "{{user `memory`}}",
             "qemu_binary": "qemu-system-x86_64",
 
             "boot_command": [
