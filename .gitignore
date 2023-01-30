@@ -1,3 +1,6 @@
 *.swp
 *.html
 *.ignore
+# ignoring this one because it's generated
+debian-11-bullseye-amd64/scripts/user.sh
+
