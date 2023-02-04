@@ -1,6 +1,7 @@
 *.swp
 *.html
 *.ignore
-# ignoring this one because it's generated
-debian-11-bullseye-amd64/scripts/user.sh
 
+# ignoring because they're generated from templates
+debian-11-bullseye-amd64/scripts/user.sh
+debian-11-bullseye-amd64/metadata.json

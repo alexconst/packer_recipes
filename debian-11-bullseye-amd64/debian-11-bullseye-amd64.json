@@ -1,8 +1,9 @@
 {
-    "description": "Creates a Debian 11 (Bullseye) amd64 machine image.",
+    "description": "Debian 11 (Bullseye) amd64 machine image.",
     "variables": {
-        "outputs_dir": "builds.ignore",
-        "vm_name": "debian-11-bullseye-amd64",
+        "box_version": "{{env `BOX_VERSION`}}",
+        "outputs_dir": "{{env `PACKER_OUTPUT_FOLDER`}}",
+        "vm_name": "{{env `VM_NAME`}}",
         "iso_url": "{{env `PACKER_DEBIAN_ISO_URL`}}",
         "iso_sha512": "{{env `PACKER_DEBIAN_ISO_SUM`}}",
         "cores": "2",
@@ -28,7 +29,7 @@
     "builders": [
         {
             "type": "qemu",
-            "name": "bullseye-qemu",
+            "name": "libvirt",
             "headless": "false",
             "accelerator": "kvm",
             "disk_interface": "virtio-scsi",
@@ -69,10 +70,11 @@
     "provisioners": [
         {
             "type": "shell",
-            "only": ["bullseye-qemu"],
+            "only": ["libvirt"],
             "execute_command": "echo '{{user `ssh_pass`}}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
             "scripts": [
                 "scripts/base.sh",
+                "scripts/network.sh",
                 "scripts/user.sh",
                 "scripts/motd.sh",
                 "scripts/qemu.sh",
@@ -89,7 +91,7 @@
     "post-processors": [
         {
             "type": "vagrant",
-            "only": ["bullseye-qemu"],
+            "only": ["libvirt"],
             "keep_input_artifact": true,
             "compression_level": 0,
             "output": "{{user `outputs_dir`}}/{{user `vm_name`}}_{{.BuildName}}.box"

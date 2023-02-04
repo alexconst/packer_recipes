@@ -5,20 +5,20 @@ echo "Timestamp the box..."
 date '+%F %T' > /etc/issue.vagrant
 
 
-echo "Create the vagrant user and group if it doesn't exit..."
-if [[ ! -d "/home/vagrant" ]]; then
-    /usr/sbin/groupadd vagrant
-    /usr/sbin/useradd -g vagrant -p $(perl -e'print crypt("vagrant", "PACKER_SSH_PASS")') -m -s /bin/bash vagrant
+echo "Create the PACKER_SSH_USER user and group if it doesn't exit..."
+if [[ ! -d "/home/PACKER_SSH_USER" ]]; then
+    /usr/sbin/groupadd PACKER_SSH_USER
+    /usr/sbin/useradd -g PACKER_SSH_USER -p $(perl -e'print crypt("PACKER_SSH_USER", "PACKER_SSH_PASS")') -m -s /bin/bash PACKER_SSH_USER
 fi
 
-echo "Add the vagrant user to the sudo group..."
-usermod -a -G sudo vagrant
+echo "Add the PACKER_SSH_USER user to the sudo group..."
+usermod -a -G sudo PACKER_SSH_USER
 
-echo "Set password-less sudo for the vagrant user (Vagrant needs it)..."
+echo "Set password-less sudo for the PACKER_SSH_USER user (Vagrant needs it)..."
 # (setting permissions before moving file to sudoers.d)
-echo '%vagrant ALL=NOPASSWD:ALL' > /tmp/vagrant
-chmod 0440 /tmp/vagrant
-mv /tmp/vagrant /etc/sudoers.d/
+echo '%PACKER_SSH_USER ALL=NOPASSWD:ALL' > /tmp/PACKER_SSH_USER
+chmod 0440 /tmp/PACKER_SSH_USER
+mv /tmp/PACKER_SSH_USER /etc/sudoers.d/
 
 
 echo "Fix 'stdin: is not a tty' non-fatal error message..."
@@ -26,18 +26,21 @@ sed -i '/tty/!s/mesg n/tty -s \&\& mesg n/' /root/.profile
 
 echo "Fix 'dpkg-preconfigure: unable to re-open stdin: No such file or directory' non-fatal error message in apt..."
 echo -e '\nexport DEBIAN_FRONTEND=noninteractive' >> /root/.profile
-echo -e '\nexport DEBIAN_FRONTEND=noninteractive' >> /home/vagrant/.profile
+echo -e '\nexport DEBIAN_FRONTEND=noninteractive' >> /home/PACKER_SSH_USER/.profile
 
 
-# NOTE: this isn't really needed since when there is no SSH keypair, Vagrant
-# will generate one. Unless you would want to disable password login from the
-# start.
-#echo "Install the insecure vagrant SSH keys..."
-#mkdir /home/vagrant/.ssh
-#chmod 0700 /home/vagrant/.ssh
-#curl -Lo /home/vagrant/.ssh/authorized_keys 'https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub'
-#chmod 0600 /home/vagrant/.ssh/authorized_keys
-#chown -R vagrant:vagrant /home/vagrant/.ssh
+mkdir -p /root/.ssh
+chmod 0700 /root/.ssh
+echo "" > /root/.ssh/authorized_keys
+mkdir -p /home/PACKER_SSH_USER/.ssh
+chmod 0700 /home/PACKER_SSH_USER/.ssh
+echo "" > /home/PACKER_SSH_USER/.ssh/authorized_keys
+# NOTE: an insecure key is added during image creation, but when you do `vagrant up` that key is replaced by a dynamically generated secure key
+apt-get -y install curl
+echo "Installing SSH keys..."
+curl -Lo /home/PACKER_SSH_USER/.ssh/authorized_keys 'https://raw.githubusercontent.com/hashicorp/vagrant/main/keys/vagrant.pub'
+chmod 0600 /home/PACKER_SSH_USER/.ssh/authorized_keys
+chown -R PACKER_SSH_USER:PACKER_SSH_USER /home/PACKER_SSH_USER/.ssh
 
 
 echo "Install NFS..."
