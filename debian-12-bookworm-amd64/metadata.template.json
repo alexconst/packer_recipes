@@ -1,0 +1,16 @@
+{
+  "name": "",
+  "description": "",
+  "versions": [
+    {
+      "version": "",
+      "providers": [
+        {
+          "name": "libvirt",
+          "url": ""
+        }
+      ]
+    }
+  ]
+}
+

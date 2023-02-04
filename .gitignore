@@ -1,7 +1,11 @@
 *.swp
 *.html
 *.ignore
+.ignore.*
+packer_cache
 
 # ignoring because they're generated from templates
 debian-11-bullseye-amd64/scripts/user.sh
 debian-11-bullseye-amd64/metadata.json
+debian-1*/scripts/user.sh
+debian-1*/metadata.json
