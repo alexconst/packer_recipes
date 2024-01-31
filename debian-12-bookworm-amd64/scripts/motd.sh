@@ -94,8 +94,8 @@ cat <<'EOF' > /etc/update-motd.d/10-sysinfo
 
 date=`date`
 load=`cat /proc/loadavg | awk '{print $1}'`
-root_usage=`df -h / | awk '/\// {percent=$(NF-1); avail=$(NF-2); print percent " (" avail " free)"}'`
-memory_usage=`free -m | awk '/Mem:/ { total=$2 } /buffers\/cache/ { used=$3 } END { printf("%3.1f%% (%0.2fG avail)", used/total*100, (total-used)/1000)}'`
+memory_usage=`free -m | awk '/Mem:/ { total=$2 ; avail=$7 } END { printf("%3.1f%% (%0.2fGiB free)", (total-avail)/total*100, avail/1024)}'`
+root_usage=`df -h / | awk '/\// {percent=$(NF-1); avail=$(NF-2); print percent " (" avail "iB free)"}'`
 swap_usage=`free -m | awk '/Swap/ { printf("%3.1f%%", "exit !$2;$3/$2*100") }'`
 users=`users | wc -w`
 time=`uptime | grep -ohe 'up .*' | sed 's/,/\ hours/g' | awk '{ printf $2" "$3 }'`
@@ -104,10 +104,10 @@ ip=`ip route get $(ip route show 0.0.0.0/0 | grep -oP 'via \K\S+') | grep -oP 's
 
 echo "System information as of: $date"
 echo
-printf "System load:\t%s\t\t\tIP Address:\t%s\n" $load $ip
-printf "Memory usage:\t%s\tSystem uptime:\t%s\n" "$memory_usage" "$time"
-printf "Usage on /:\t%s\t\tSwap usage:\t%s\n" "$root_usage" "$swap_usage"
-printf "Local Users:\t%s\t\t\tProcesses:\t%s\n" "$users" "$processes"
+printf "%-16s%-32s%-16s%s\n" 'System load:' "$load" 'IP Address:' "$ip"
+printf "%-16s%-32s%-16s%s\n" 'Memory load:' "$memory_usage" 'Uptime:' "$time"
+printf "%-16s%-32s%-16s%s\n" 'Disk use:' "$root_usage" 'Swap use:' "$swap_usage"
+printf "%-16s%-32s%-16s%s\n" 'Local users:' "$users" 'Processes:' "$processes"
 echo
 
 EOF
